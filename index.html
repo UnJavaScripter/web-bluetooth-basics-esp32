@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Bluetooth</title>
+  <style>
+    body {
+      color: #999;
+      background-color: #333f5f;
+    }
+
+    button {
+      background-color: slategray;
+      padding: 1rem 1.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 1px;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+      margin: 1rem;
+      font-weight: bold;
+      color: #fffbfb;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #303040 !important;
+      cursor: default;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div>
+      <button id="connect">Connect to Bluetooth device</button>
+    </div>
+    <div>
+      <button id="button-red" style="background: #e74c3c;" disabled>Red</button>
+      <button id="button-green" style="background: #2ecc71;" disabled>Green</button>
+      <button id="button-blue" style="background: #2980b9;" disabled>Blue</button>
+    </div>
+    <div>
+      <button id="button-clear" style="background: #425461;" disabled>Clear</button>
+    </div>
+  </main>
+  <script src="./dist/app.js"></script>
+  <script>
+    const wbt = new WebBluetoothController(
+      "MyESP32", // Device Name
+      "4fafc201-1fb5-459e-8fcc-c5c9c331914b", // Service ID
+      "beb5483e-36e1-4688-b7f5-ea07361b26a8" // Characteristic ID
+    );
+    const connect = document.getElementById('connect');
+    const btnRed = document.getElementById('button-red');
+    const btnGreen = document.getElementById('button-green');
+    const btnBlue = document.getElementById('button-blue');
+    const btnClear = document.getElementById('button-clear');
+
+    // The order for THIS particular example matters
+    const buttons = [btnClear, btnRed, btnGreen, btnBlue];
+
+    connect.addEventListener('pointerdown', async event => {
+      await wbt.init();
+      console.log('Connected!');
+      buttons.forEach((button, index) => {
+        button.removeAttribute('disabled');
+        button.addEventListener('pointerdown', event => {
+          if (!event.target.disabled) {
+            /*
+              The code written in the Bluetoot characteristic
+              will act based on the message we send:
+              
+              0 will clear
+              1 will light up the red LED
+              2 will light up the green LED
+              3 will light up the blue LED
+            */
+            wbt.sendMessage(index);
+          }
+        });
+      })
+
+    });
+  </script>
+</body>
+
+</html>

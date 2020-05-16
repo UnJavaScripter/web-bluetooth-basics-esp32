@@ -1,0 +1,15 @@
+{
+  "name": "ts-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc -w"
+  },
+  "author": "unJavaScripter",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/web-bluetooth": "0.0.6"
+  }
+}
